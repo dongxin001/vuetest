@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>简易留言记录版</title>
+		<style type="text/css">
+			*{
+				margin: 0;
+				padding: 0;
+				list-style: none;
+				box-sizing: border-box;
+				outline: none;
+			}
+			.clearfix:after{
+				content: '';
+				display: block;
+				clear: both;
+			}
+			#app{
+				width: 1000px;
+				margin: 0 auto;
+				padding-top: 100px;
+			}
+			#app textarea{
+				width: 100%;
+				max-width: 100%;
+				min-height:50px;
+				font-size: 16px;
+			}
+			.app ul{
+				width: 100%;
+			}
+			.lis{
+				width: 100%;
+				padding: 0 25px;
+				margin: 10px 0;
+				position: relative;
+				background: #009688;
+				transition: 1s;
+				border-left: 6px solid white;
+			}
+			.lis:hover{
+				box-shadow: 3px 3px 5px #666666;
+			}
+			.rankNum{
+				display: block;
+				color: white;
+				font-size: 18px;
+				line-height:30px;
+			    padding-right: 5px;
+				word-wrap:break-word;
+			}
+			.btn{
+				width: 20px;
+				line-height: 20px;
+				font-size: 16px;
+				font-weight: bold;
+				text-align: center;
+				color:#fff;
+				background: #D44950;
+				border-radius: 10px;
+				position: absolute;
+				right:5px;
+				top: 6px;
+				cursor: pointer;
+				z-index: 2;
+				display: none;
+			}
+			.lis:hover .btn{
+				display: block;
+			}
+		</style>
+	</head>
+	<body style="background: #E4E8F1;">
+		<div id="app" v-cloak>
+			<textarea 
+				v-model="newTodoText" 
+				v-on:keydown.enter="addNewTodo"
+				placeholder="Add a todo and press the enter key to submit."
+			>
+			</textarea>
+			<ul>
+				<li 
+					class="lis" 
+					v-for="(item, idx) in list"
+				><span class="rankNum" v-text="(idx+1) + '. ' + item.cont"></span><span class="btn" title="删除" v-bind:index="idx" v-on:click="removeTodo">&times;</span></li>
+			</ul>
+		</div>
+		
+		<script src="../js/jquery/jquery-3.1.1.js"></script>
+		<script src="../js/jquery/jquery.cookie.js"></script>
+		<script src="../js/vue.js"></script>
+		<script type="text/javascript">
+			//存取localStorage中的数据
+			var store = {
+				save(key,value){
+					localStorage.setItem(key,JSON.stringify(value));
+				},
+				fetch(key){
+					return JSON.parse(localStorage.getItem(key)) || [];
+				}
+			}
+			
+			/*var items = [
+						{cont: "Today's mission is to create a list of events."},
+						{cont: "This month's mission is to reduce weight, made a 8000 steps a day morning running plan."},
+						{cont: "When your ability can't meet your ambitions, so this moment you should calm down to study, every great is the result of a brave start."}
+			        ];*/
+	        
+	        //取出所有的值
+			var list = store.fetch("iTest");
+		
+			var app = new Vue({
+				el: '#app',
+				data: {
+					newTodoText: '',
+					list: list,
+				},
+				watch:{
+					list:{//深度监控list这个属性，当这个属性对应的值发生变化就会执行函数
+						handler:function(){
+							store.save("iTest",this.list);
+						},
+						deep:true
+					}
+				},
+				methods: {
+					addNewTodo: function(event){
+						event.preventDefault();//阻止元素发生默认的行为
+						event.cancelBubble=true;//阻止浏览器默认的事件冒泡行为,支持标准浏览器
+						event.stopPropagation();//阻止浏览器默认的事件冒泡行为，支持IE
+						if(this.newTodoText == ''){
+							alert('请规范输入内容！');
+							this.newTodoText = '';
+						}else{
+							this.list.push({
+								cont: this.newTodoText
+							});
+							this.newTodoText = '';
+						}
+					},
+					removeTodo: function(event){
+						//console.log(event.target, this.items);
+						var index = $(event.target).attr('index');
+						//console.log(index);
+						this.list.splice(index,1);
+					}
+				}
+			})
+		</script>
+	</body>
+</html>

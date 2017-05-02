@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<!-- 引入样式 -->
+		<link rel="stylesheet" href="https://unpkg.com/element-ui@next/lib/theme-default/index.css">
+		<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+		<title>Tab切换</title>
+		<style type="text/css">
+			.headTop{
+				width: 100%;
+				padding-bottom: 10px;
+				border-bottom: 1px solid #ccc;
+			}
+			.red{
+				background: red;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app" v-cloak>
+			<div class="headTop">
+				<input type="button" value="信息咨询A" @click="tabComponent(1)" :class="{red: 1 === showbg}"/>
+				<input type="button" value="信息咨询B" @click="tabComponent(2)" :class="{red: 2 === showbg}"/>
+				<input type="button" value="信息咨询C" @click="tabComponent(3)" :class="{red: 3 === showbg}"/>
+			</div>
+			<div class="cont">
+				<my-component :is="msg"></my-component>
+			</div>
+		</div>
+		
+		<!-- 先引入 Vue -->
+	    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+	    <!-- 引入组件库 -->
+	    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+	    <script type="text/javascript">
+	    	var custom1 = Vue.component('custom1', {
+	    		template: `<div>信息咨询AAA</div>`
+	    	})
+	    	var custom2 = Vue.component('custom2', {
+	    		template: `<div>信息咨询BBB</div>`
+	    	})
+	    	var custom3 = Vue.component('custom3', {
+	    		template: `<div>信息咨询CCC</div>`
+	    	})
+	    	
+	    	var app = new Vue({
+	    		el: '#app',
+	    		data: {
+	    			msg: custom1,
+	    			showbg: 1
+	    		},
+	    		methods: {
+	    			tabComponent: function (idx){
+	    				this.showbg = idx;
+	    				if(idx == 1){
+	    					this.msg = custom1;
+	    				}else if(idx == 2){
+	    					this.msg = custom2;
+	    				}else if(idx == 3){
+	    					this.msg = custom3;
+	    				}
+	    			}
+	    		}
+	    	})
+	    </script>
+	</body>
+</html>
